@@ -1,0 +1,104 @@
+type Order
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ])
+  @key(name: "byCustomerByStatusByDate", fields: ["customerID", "status", "date"], queryField: "ordersByCustomerByStatusByDate")
+  @key(name: "byCustomerByDate", fields: ["customerID", "date"], queryField: "ordersByCustomerByDate")
+  @key(name: "byRepresentativebyDate", fields: ["accountRepresentativeID", "date"], queryField: "ordersByRepresentativeByDate")
+  @key(name: "byProduct", fields: ["productID", "id"], queryField: "ordersByProduct")
+{
+  id: ID!
+  customerID: ID!
+  accountRepresentativeID: ID!
+  productID: ID!
+  status: String!
+  amount: Int!
+  date: String!
+}
+
+type Customer
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ])
+  @key(name: "byRepresentative", fields: ["accountRepresentativeID", "id"], queryField: "customersByRepresentative") {
+  id: ID!
+  name: String!
+  phoneNumber: String
+  accountRepresentativeID: ID!
+  ordersByDate: [Order] @connection(keyName: "byCustomerByDate", fields: ["id"])
+  ordersByStatusDate: [Order] @connection(keyName: "byCustomerByStatusByDate", fields: ["id"])
+}
+
+type Employee
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ])
+  @key(name: "newHire", fields: ["newHire", "id"], queryField: "employeesNewHire")
+  @key(name: "newHireByStartDate", fields: ["newHire", "startDate"], queryField: "employeesNewHireByStartDate")
+  @key(name: "byName", fields: ["name", "id"], queryField: "employeesByName")
+  @key(name: "byTitle", fields: ["jobTitle", "id"], queryField: "employeesByJobTitle")
+  @key(name: "byWarehouse", fields: ["warehouseID", "id"], queryField: "employeesByWarehouse") {
+  id: ID!
+  name: String!
+  startDate: String!
+  phoneNumber: String!
+  warehouseID: ID!
+  jobTitle: String!
+  newHire: String! # We have to use String type, because Boolean types cannot be sort keys
+}
+
+type Warehouse
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ]) {
+  id: ID!
+  employees: [Employee] @connection(keyName: "byWarehouse", fields: ["id"])
+}
+
+type AccountRepresentative
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ])
+  @key(name: "bySalesPeriodByOrderTotal", fields: ["salesPeriod", "orderTotal"], queryField: "repsByPeriodAndTotal") {
+  id: ID!
+  customers: [Customer] @connection(keyName: "byRepresentative", fields: ["id"])
+  orders: [Order] @connection(keyName: "byRepresentativebyDate", fields: ["id"])
+  orderTotal: Int
+  salesPeriod: String
+}
+
+type Product
+  @model
+  @auth(rules: [
+    { allow: groups, groups: ["admin"] }
+  ])
+  @key(name: "byName", fields: ["name", "id"], queryField: "productsByName") {
+  id: ID!
+  name: String!
+  orders: [Order] @connection(keyName: "byProduct", fields: ["id"])
+}
+
+type User
+  @model
+  @auth(rules: [
+    { allow: public, operations: [read], provider: iam },
+    { allow: private, operations: [read] },
+    { allow: groups, groups: ["superadmin"] }
+  ]) {
+  id: ID!
+  username: String!
+  password: String! # Demo user only - do not store password like this!
+  picture: S3Object
+  documents: [S3Object!]
+}
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+}
