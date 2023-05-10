@@ -27,23 +27,23 @@ export const LoginForm = (props) => {
     }
 
     async function getDemoUser() {
-      const userData = await API.graphql({
-        query: getUser,
-        variables: { id: "demo" },
-        authMode: "AWS_IAM",
-      });
+      // const userData = await API.graphql({
+      //   query: getUser,
+      //   variables: { id: "ap-southeast-2_7cgK4jpgI" },
+      //   authMode: "AWS_IAM",
+      // });
 
-      const { username, password } = userData.data.getUser;
+      // const { username, password } = userData.data.getUser;
 
+      const username = 'hector.longarte@gmail.com'
+      const password = 'T_yeBp_m3ybm3'
       setDemoUser({ username, password });
     }
-
-    getDemoUser();
   });
 
-  if (!demoUser) {
-    return null;
-  }
+  // if (!demoUser) {
+  //   return null;
+  // }
 
   const submit = (values) => {
     setLoading(true);
@@ -84,19 +84,21 @@ export const LoginForm = (props) => {
     >
       <CardContent className={LoginFormClasses.content}>
         <TextInput
-          autoFocus
-          source="username"
-          label={translate("ra.auth.username")}
-          validate={required()}
-          fullWidth
+            autoFocus
+            name="username"
+            source="username"
+            label={translate("ra.auth.username")}
+            validate={required()}
+            fullWidth
         />
         <TextInput
-          source="password"
-          label={translate("ra.auth.password")}
-          type="password"
-          autoComplete="current-password"
-          validate={required()}
-          fullWidth
+            name="password"
+            source="password"
+            label={translate("ra.auth.password")}
+            type="password"
+            autoComplete="current-password"
+            validate={required()}
+            fullWidth
         />
 
         <Button

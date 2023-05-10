@@ -67,23 +67,23 @@ const dataProvider = buildDataProvider(
 );
 
 // Get the demo user avatar
-authProvider.getIdentity = async () => {
-  try {
-    const userData = await API.graphql(
-      graphqlOperation(queries.getUser, { id: "demo" })
-    );
-
-    const url = await Storage.get(userData.data.getUser.picture.key);
-
-    return {
-      id: "demo",
-      fullName: "Demo",
-      avatar: url,
-    };
-  } catch (e) {
-    console.log(e);
-  }
-};
+// authProvider.getIdentity = async () => {
+//   try {
+//     const userData = await API.graphql(
+//       graphqlOperation(queries.getUser, { id: "d0ee4d21-e34c-4133-8b63-bee8befed58d" })
+//     );
+//
+//     const url = await Storage.get(userData.data.getUser.picture.key);
+//
+//     return {
+//       id: "d0ee4d21-e34c-4133-8b63-bee8befed58d",
+//       fullName: "Hector Longarte",
+//       avatar: url,
+//     };
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 
 function App() {
   return (
@@ -158,4 +158,14 @@ function App() {
   );
 }
 
+// function App() {
+//   return (
+//       <Admin
+//           authProvider={authProvider}
+//           dataProvider={dataProvider}
+//           loginPage={LoginPage}
+//           dashboard={Dashboard}
+//       ></Admin>
+//   );
+// }
 export default App;
